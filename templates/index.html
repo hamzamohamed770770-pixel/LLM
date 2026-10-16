@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Prompt Optimizer</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #result {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .result-box {
+            background: #f8fafc;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .result-box h3 {
+            margin-top: 0;
+        }
+
+        .optimized {
+            background: #eef6ff;
+            border: 2px solid #2563eb;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            color: #666;
+        }
+
+        #error {
+            color: #dc2626;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <h1>🤖 AI Prompt Optimizer</h1>
+
+        <p class="subtitle">
+            Transform your simple prompt into a clearer and more effective AI prompt.
+        </p>
+
+
+        <textarea
+            id="prompt"
+            placeholder="Enter your prompt here..."
+        ></textarea>
+
+
+        <button onclick="optimizePrompt()">
+            ✨ Optimize Prompt
+        </button>
+
+
+        <div id="loading">
+            Processing your prompt...
+        </div>
+
+
+        <div id="error"></div>
+
+
+        <div id="result">
+
+            <h2>📊 Analysis Result</h2>
+
+
+            <div class="result-box">
+                <h3>Role</h3>
+                <p id="role"></p>
+            </div>
+
+
+            <div class="result-box">
+                <h3>Task</h3>
+                <p id="task"></p>
+            </div>
+
+
+            <div class="result-box">
+                <h3>Context</h3>
+                <p id="context"></p>
+            </div>
+
+
+            <div class="result-box">
+                <h3>Constraints</h3>
+                <p id="constraints"></p>
+            </div>
+
+
+            <div class="result-box">
+                <h3>Output Format</h3>
+                <p id="output_format"></p>
+            </div>
+
+
+            <div class="result-box optimized">
+                <h3>✨ Optimized Prompt</h3>
+                <p id="optimized_prompt"></p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        async function optimizePrompt() {
+
+            const prompt = document
+                .getElementById("prompt")
+                .value
+                .trim();
+
+
+            const result = document.getElementById("result");
+            const loading = document.getElementById("loading");
+            const error = document.getElementById("error");
+
+
+            if (!prompt) {
+
+                error.textContent = "Please enter a prompt.";
+
+                return;
+            }
+
+
+            error.textContent = "";
+
+            result.style.display = "none";
+
+            loading.style.display = "block";
+
+
+            try {
+
+                const response = await fetch("/optimize", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        prompt: prompt
+                    })
+
+                });
+
+
+                const data = await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error || "Something went wrong."
+                    );
+
+                }
+
+
+                document.getElementById("role").textContent =
+                    data.role || "Not available";
+
+
+                document.getElementById("task").textContent =
+                    data.task || "Not available";
+
+
+                document.getElementById("context").textContent =
+                    data.context || "Not available";
+
+
+                document.getElementById("constraints").textContent =
+                    data.constraints || "Not available";
+
+
+                document.getElementById("output_format").textContent =
+                    data.output_format || "Not available";
+
+
+                document.getElementById("optimized_prompt").textContent =
+                    data.optimized_prompt || "Not available";
+
+
+                result.style.display = "block";
+
+            }
+
+            catch (err) {
+
+                error.textContent = err.message;
+
+            }
+
+            finally {
+
+                loading.style.display = "none";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
